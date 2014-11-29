@@ -13,7 +13,7 @@ namespace libifman {
 InterfaceManager::InterfaceManager(){
 }
 
-void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength){
+void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength, const Callbacks& callbacks){
 	for (auto header = reinterpret_cast<nlmsghdr*>(buf); receivedLength >= static_cast<ssize_t>(sizeof(*header)); ){
 		auto len = header->nlmsg_len;
 		if (len < sizeof(*header) || len > receivedLength)
@@ -21,23 +21,16 @@ void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength){
 		else {
 			Interface interface(static_cast<ifinfomsg*>(NLMSG_DATA(header)), len);
 
-			switch (header->nlmsg_type) {
-				case RTM_DELLINK:
-					std::cout << "Removed interface " << interface.name << " (" << interface.Type() << ", " << interface.address << ") \n";
-					break;
-				case RTM_NEWLINK:
-					std::cout << "New interface " << interface.name << " (" << interface.Type() << ", " << interface.address << ") \n";
-					break;
-				default:
-					std::cout << "Unknown message type " << header->nlmsg_type << "\n";
-			}
+			auto it = callbacks.find(header->nlmsg_type);
+			if (it != callbacks.end())
+				it->second(interface);
 			receivedLength -= NLMSG_ALIGN(len);
 			header = reinterpret_cast<nlmsghdr*>(reinterpret_cast<char*>(header) + NLMSG_ALIGN(len));
 		}
 	}
 }
 
-void InterfaceManager::Run(const std::atomic_bool& running){
+void InterfaceManager::Run(const std::atomic_bool& running, const Callbacks& callbacks) {
 	Socket socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 
 	char buf[8192] = {0};
@@ -66,7 +59,7 @@ void InterfaceManager::Run(const std::atomic_bool& running){
 		} else if (message.msg_namelen != sizeof(local))
 			std::cerr << "Incorrect message length\n";
 		else
-			ProcessMessage(buf, receivedLength);
+			ProcessMessage(buf, receivedLength, callbacks);
 		usleep(waitInterval);
 	}
 }
