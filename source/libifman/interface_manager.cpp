@@ -37,7 +37,7 @@ void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength){
 	}
 }
 
-void InterfaceManager::Run(){
+void InterfaceManager::Run(const std::atomic_bool& running){
 	Socket socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 
 	char buf[8192];
@@ -56,7 +56,7 @@ void InterfaceManager::Run(){
 	message.msg_iov = &iov;
 	message.msg_iovlen = 1;
 
-	while (true) {
+	while (running) {
 		ssize_t receivedLength = socket.ReceiveMessage(message, MSG_DONTWAIT);
 		if (receivedLength < 0) {
 			int error = errno;

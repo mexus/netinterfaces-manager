@@ -3,6 +3,7 @@
 
 #include "interface.h"
 #include <unistd.h>
+#include <atomic>
 
 namespace libifman {
 
@@ -10,7 +11,7 @@ class InterfaceManager {
 public:
 	InterfaceManager();
 	//GetList();
-	static void Run();
+	static void Run(const std::atomic_bool& running);
 
 private:
 	static const useconds_t waitInterval = 250000;
