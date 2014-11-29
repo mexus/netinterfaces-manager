@@ -1,5 +1,5 @@
-#ifndef LIB_INTERFACE_MANAGER_H
-#define LIB_INTERFACE_MANAGER_H
+#ifndef LIBIFMAN_INTERFACE_MANAGER_H
+#define LIBIFMAN_INTERFACE_MANAGER_H
 
 #include "interface.h"
 #include <unistd.h>
@@ -26,4 +26,4 @@ private:
 
 }
 
-#endif /* LIB_INTERFACE_MANAGER_H */
+#endif /* LIBIFMAN_INTERFACE_MANAGER_H */

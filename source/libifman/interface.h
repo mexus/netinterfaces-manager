@@ -1,5 +1,5 @@
-#ifndef LIB_NET_INTERFACE_H
-#define LIB_NET_INTERFACE_H
+#ifndef LIBIFMAN_INTERFACE_H
+#define LIBIFMAN_INTERFACE_H
 
 #include <linux/rtnetlink.h>
 #include <string>
@@ -28,4 +28,4 @@ private:
 
 }
 
-#endif /* LIB_NET_INTERFACE_H */
+#endif /* LIBIFMAN_INTERFACE_H */
