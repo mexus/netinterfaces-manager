@@ -40,7 +40,7 @@ void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength){
 void InterfaceManager::Run(const std::atomic_bool& running){
 	Socket socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 
-	char buf[8192];
+	char buf[8192] = {0};
 	iovec iov{buf, sizeof(buf)};
 	sockaddr_nl local;
 	std::memset(&local, 0, sizeof(local));
@@ -51,6 +51,7 @@ void InterfaceManager::Run(const std::atomic_bool& running){
 	socket.Bind(&local);
 
 	msghdr message;
+	memset(&message, 0, sizeof(message));
 	message.msg_name = &local;
 	message.msg_namelen = sizeof(local);
 	message.msg_iov = &iov;
