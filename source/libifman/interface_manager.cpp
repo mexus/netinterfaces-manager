@@ -33,7 +33,7 @@ void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength, const 
 void InterfaceManager::Run(const std::atomic_bool& running, const Callbacks& callbacks) {
 	Socket socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 
-	char buf[8192] = {0};
+	char buf[iflistReplyBuffer] = {0};
 	iovec iov{buf, sizeof(buf)};
 	sockaddr_nl local;
 	std::memset(&local, 0, sizeof(local));

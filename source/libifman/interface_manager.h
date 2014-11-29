@@ -19,6 +19,7 @@ public:
 
 private:
 	static const useconds_t waitInterval = 250000;
+	static const unsigned short iflistReplyBuffer = 8192;
 
 	static void ProcessMessage(char *buf, ssize_t &receivedLength, const Callbacks&);
 };
