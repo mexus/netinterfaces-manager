@@ -1,5 +1,5 @@
 Library:
-[ ] Refactor library files
+[x] Refactor library files
 [ ] Add callbacks for a InterfaceManager::Run
 [ ] List interfaces
 

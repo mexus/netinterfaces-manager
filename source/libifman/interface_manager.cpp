@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <iostream>
 
+namespace libifman {
 
 InterfaceManager::InterfaceManager(){
 }
@@ -18,7 +19,7 @@ void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength){
 		if (len < sizeof(*header) || len > receivedLength)
 			std::cerr << "Incorrect message length: " << len << "\n";
 		else {
-			NetInterace interface(static_cast<ifinfomsg*>(NLMSG_DATA(header)), len);
+			Interface interface(static_cast<ifinfomsg*>(NLMSG_DATA(header)), len);
 
 			switch (header->nlmsg_type) {
 				case RTM_DELLINK:
@@ -31,8 +32,7 @@ void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength){
 					std::cout << "Unknown message type " << header->nlmsg_type << "\n";
 			}
 			receivedLength -= NLMSG_ALIGN(len);
-			//header = reinterpret_cast<nlmsghdr*>(reinterpret_cast<char*>(header) + NLMSG_ALIGN(len));
-			header = reinterpret_cast<nlmsghdr*>(header + NLMSG_ALIGN(len));
+			header = reinterpret_cast<nlmsghdr*>(reinterpret_cast<char*>(header) + NLMSG_ALIGN(len));
 		}
 	}
 }
@@ -68,5 +68,7 @@ void InterfaceManager::Run(){
 			ProcessMessage(buf, receivedLength);
 		usleep(waitInterval);
 	}
+}
+
 }
 

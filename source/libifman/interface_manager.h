@@ -1,9 +1,10 @@
 #ifndef LIB_INTERFACE_MANAGER_H
 #define LIB_INTERFACE_MANAGER_H
 
-#include "net_interface.h"
-
+#include "interface.h"
 #include <unistd.h>
+
+namespace libifman {
 
 class InterfaceManager { 
 public:
@@ -16,5 +17,7 @@ private:
 
 	static void ProcessMessage(char *buf, ssize_t &receivedLength);
 };
+
+}
 
 #endif /* LIB_INTERFACE_MANAGER_H */

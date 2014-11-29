@@ -6,9 +6,11 @@
 #include <unordered_map>
 #include <unordered_set>
 
-class NetInterace {
+namespace libifman {
+
+class Interface {
 public:
-	NetInterace(ifinfomsg*, int attributesLength);
+	Interface(ifinfomsg*, int attributesLength);
 
 	const int index;
 	const unsigned short type;
@@ -23,5 +25,7 @@ private:
 	static std::string TypeToStr(int);
 	static std::string L2Address(const unsigned char* str, unsigned int size);
 };
+
+}
 
 #endif /* LIB_NET_INTERFACE_H */

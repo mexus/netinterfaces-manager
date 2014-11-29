@@ -1,6 +1,6 @@
-#include <interfaces/interface_manager.h>
+#include <libifman/interface_manager.h>
 
 int main(){
-	InterfaceManager::Run();
+	libifman::InterfaceManager::Run();
 	return 0;
 }

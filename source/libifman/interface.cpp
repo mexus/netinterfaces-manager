@@ -1,9 +1,11 @@
-#include "net_interface.h"
+#include "interface.h"
 #include <sstream>
 #include <iomanip>
 #include <net/if_arp.h>
 
-NetInterace::NetInterace(ifinfomsg* ifi, int attributesLength) : index(ifi->ifi_index), type(ifi->ifi_type)
+namespace libifman {
+
+Interface::Interface(ifinfomsg* ifi, int attributesLength) : index(ifi->ifi_index), type(ifi->ifi_type)
 {
 	auto attributes = ParseRAttributes(IFLA_RTA(ifi), attributesLength, {IFLA_IFNAME, IFLA_ADDRESS});
 	auto it = attributes.find(IFLA_IFNAME);
@@ -14,11 +16,11 @@ NetInterace::NetInterace(ifinfomsg* ifi, int attributesLength) : index(ifi->ifi_
 		address = L2Address(static_cast<const unsigned char*>(RTA_DATA(it->second)), RTA_PAYLOAD(it->second));
 }
 
-std::string NetInterace::Type() const {
+std::string Interface::Type() const {
 	return TypeToStr(type);
 }
 
-std::string NetInterace::L2Address(const unsigned char* str, unsigned int size) {
+std::string Interface::L2Address(const unsigned char* str, unsigned int size) {
 	std::stringstream res;
 	for (unsigned int i = 0; i != size; ++i){
 		if (i != 0) res << ":";
@@ -27,10 +29,10 @@ std::string NetInterace::L2Address(const unsigned char* str, unsigned int size) 
 	return res.str();
 }
 
-const std::unordered_map<int, std::string> NetInterace::arpsNames
+const std::unordered_map<int, std::string> Interface::arpsNames
 #include "arps_names.inc"
 
-std::string NetInterace::TypeToStr(int t){
+std::string Interface::TypeToStr(int t){
 	auto it = arpsNames.find(t);
 	if (it == arpsNames.end())
 		return std::to_string(t);
@@ -39,7 +41,7 @@ std::string NetInterace::TypeToStr(int t){
 }
 
 std::unordered_map<unsigned short, rtattr*>
-NetInterace::ParseRAttributes(rtattr *attribute, int attributesLength, const std::unordered_set<unsigned short>& lookupTypes) {
+Interface::ParseRAttributes(rtattr *attribute, int attributesLength, const std::unordered_set<unsigned short>& lookupTypes) {
 	std::unordered_map<unsigned short, rtattr*> res;
 	while (RTA_OK(attribute, attributesLength)) {
 		auto type = attribute->rta_type;
@@ -48,5 +50,7 @@ NetInterace::ParseRAttributes(rtattr *attribute, int attributesLength, const std
 		attribute = RTA_NEXT(attribute, attributesLength);
 	}
 	return std::move(res);
+}
+
 }
 

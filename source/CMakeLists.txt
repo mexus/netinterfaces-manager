@@ -1,7 +1,7 @@
-add_library (source-library
+add_library (interface-manager
 	helpers/socket.cpp
 
-	interfaces/interface_manager.cpp
-	interfaces/net_interface.cpp
+	libifman/interface_manager.cpp
+	libifman/interface.cpp
 )
 
