@@ -13,8 +13,8 @@ namespace libifman {
 InterfaceManager::InterfaceManager(){
 }
 
-void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength, const Callbacks& callbacks){
-	for (auto header = reinterpret_cast<nlmsghdr*>(buf); receivedLength >= static_cast<ssize_t>(sizeof(*header)); ){
+void InterfaceManager::ProcessMessage(const msghdr& message, ssize_t &receivedLength, const Callbacks& callbacks){
+	for (auto header = static_cast<nlmsghdr*>(message.msg_iov->iov_base); receivedLength >= static_cast<ssize_t>(sizeof(*header)); ){
 		auto len = header->nlmsg_len;
 		if (len < sizeof(*header) || len > receivedLength)
 			std::cerr << "Incorrect message length: " << len << "\n";
@@ -32,17 +32,11 @@ void InterfaceManager::ProcessMessage(char *buf, ssize_t &receivedLength, const 
 
 void InterfaceManager::Run(const std::atomic_bool& running, const Callbacks& callbacks) {
 	Socket socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
+	auto local = PrepareNetLinkClient();
+	socket.Bind(&local);
 
 	char buf[iflistReplyBuffer] = {0};
 	iovec iov{buf, sizeof(buf)};
-	sockaddr_nl local;
-	std::memset(&local, 0, sizeof(local));
-	local.nl_family = AF_NETLINK;
-	local.nl_groups = RTNLGRP_LINK;
-	local.nl_pid = getpid();
-
-	socket.Bind(&local);
-
 	msghdr message;
 	memset(&message, 0, sizeof(message));
 	message.msg_name = &local;
@@ -59,9 +53,18 @@ void InterfaceManager::Run(const std::atomic_bool& running, const Callbacks& cal
 		} else if (message.msg_namelen != sizeof(local))
 			std::cerr << "Incorrect message length\n";
 		else
-			ProcessMessage(buf, receivedLength, callbacks);
+			ProcessMessage(message, receivedLength, callbacks);
 		usleep(waitInterval);
 	}
+}
+
+sockaddr_nl InterfaceManager::PrepareNetLinkClient(){
+	sockaddr_nl local;
+	std::memset(&local, 0, sizeof(local));
+	local.nl_family = AF_NETLINK;
+	local.nl_groups = RTNLGRP_LINK;
+	local.nl_pid = getpid();
+	return local;
 }
 
 }
