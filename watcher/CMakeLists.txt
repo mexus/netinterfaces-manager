@@ -4,5 +4,5 @@ add_executable(${TEST_EXE}
 )
 target_link_libraries (${TEST_EXE}
 	interface-manager
-	pthread
+        ${CMAKE_THREAD_LIBS_INIT}
 )

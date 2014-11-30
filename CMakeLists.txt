@@ -11,7 +11,7 @@ else (NOT CMAKE_BUILD_TYPE)
 	message(STATUS "Build type set to: ${CMAKE_BUILD_TYPE}")
 endif()
 
-SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+find_package(Threads)
 
 include_directories("source")
 
