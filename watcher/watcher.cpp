@@ -19,7 +19,7 @@ int main(){
 	        manager.Watch(running, {
 				{RTM_DELLINK, [&coutMutex](const Interface& interface){
 					std::lock_guard<std::mutex> lg(coutMutex);
-					std::cout << "GONE " << interface.name << " " << interface.address << " " << interface.Type() << "\n";
+					std::cout << "GONE " << interface.name << "\n";
 				}},
 				{RTM_NEWLINK, [&coutMutex](const Interface& interface){
 					std::lock_guard<std::mutex> lg(coutMutex);
