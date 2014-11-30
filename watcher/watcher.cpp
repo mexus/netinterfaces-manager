@@ -13,7 +13,7 @@ int main(){
 	std::signal(SIGINT, SignalHandler);
 	std::signal(SIGTERM, SignalHandler);
 	InterfaceManager manager;
-	manager.Watch(running, {
+        manager.Watch(running, {
 			{RTM_DELLINK, [](const Interface& interface){
 				std::cout << "Removed interface " << interface.name << " (" << interface.Type() << ", " << interface.address << ")\n";
 			}},
@@ -22,6 +22,7 @@ int main(){
 			}}
 		});
 	std::this_thread::sleep_for(std::chrono::seconds(10));
+        manager.GetList(running);
 	return 0;
 }
 
