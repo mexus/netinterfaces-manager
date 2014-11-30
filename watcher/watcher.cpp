@@ -12,7 +12,8 @@ int main(){
 	using namespace libifman;
 	std::signal(SIGINT, SignalHandler);
 	std::signal(SIGTERM, SignalHandler);
-	InterfaceManager::Run(running, {
+	InterfaceManager manager;
+	manager.Watch(running, {
 			{RTM_DELLINK, [](const Interface& interface){
 				std::cout << "Removed interface " << interface.name << " (" << interface.Type() << ", " << interface.address << ")\n";
 			}},
@@ -20,6 +21,7 @@ int main(){
 				std::cout << "Added interface " << interface.name << " (" << interface.Type() << ", " << interface.address << ")\n";
 			}}
 		});
+	std::this_thread::sleep_for(std::chrono::seconds(10));
 	return 0;
 }
 

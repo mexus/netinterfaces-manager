@@ -10,7 +10,15 @@
 
 namespace libifman {
 
-InterfaceManager::InterfaceManager(){
+InterfaceManager::InterfaceManager() : interrupt(false){
+}
+
+InterfaceManager::~InterfaceManager(){
+	interrupt = true;
+	for (auto& thread : runningThreads){
+		if (thread.joinable())
+			thread.join();
+	}
 }
 
 void InterfaceManager::ProcessMessage(const msghdr& message, ssize_t &receivedLength, const Callbacks& callbacks){
@@ -30,7 +38,12 @@ void InterfaceManager::ProcessMessage(const msghdr& message, ssize_t &receivedLe
 	}
 }
 
-void InterfaceManager::Run(const std::atomic_bool& running, const Callbacks& callbacks) {
+void InterfaceManager::Watch(const std::atomic_bool& running, const Callbacks& callbacks) {
+	std::thread t([this, &running, callbacks]{ Run(running, std::move(callbacks));});
+	runningThreads.push_back(std::move(t));
+}
+
+void InterfaceManager::Run(const std::atomic_bool& running, Callbacks callbacks) {
 	Socket socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 	auto local = PrepareNetLinkClient();
 	socket.Bind(&local);
@@ -44,7 +57,7 @@ void InterfaceManager::Run(const std::atomic_bool& running, const Callbacks& cal
 	message.msg_iov = &iov;
 	message.msg_iovlen = 1;
 
-	while (running) {
+	while (running && !interrupt) {
 		ssize_t receivedLength = socket.ReceiveMessage(message, MSG_DONTWAIT);
 		if (receivedLength < 0) {
 			int error = errno;
