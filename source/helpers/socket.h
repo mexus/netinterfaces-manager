@@ -11,6 +11,7 @@ public:
 	~Socket();
 	void Bind(const sockaddr* address, socklen_t addressLength) const;
 	ssize_t ReceiveMessage(msghdr& message, int flags) const;
+        ssize_t SendMessage(const msghdr &message, int flags) const;
 
 	template<class T>
 	void Bind(const T* address) const {

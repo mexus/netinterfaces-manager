@@ -28,6 +28,9 @@ ssize_t Socket::ReceiveMessage(msghdr& message, int flags) const {
 	return recvmsg(descriptor, &message, flags);
 }
 
+ssize_t Socket::SendMessage(const msghdr &message, int flags) const{
+        return sendmsg(descriptor, &message, flags);
+}
 
 std::string Socket::ErrorMessage(const std::string& msg, int error){
 	return "SocketException: " + msg + " error #" + std::to_string(error) + ": " + std::strerror(error);
