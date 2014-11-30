@@ -24,7 +24,7 @@ public:
 
 private:
 	typedef std::unordered_map<unsigned short, std::function<void(const nlmsghdr*)>> InnerCallbacks;
-	static const useconds_t waitInterval = 250000;
+	static const unsigned short waitIntervalMs = 250;
 	static const unsigned short iflistReplyBuffer = 8192;
 	std::atomic_bool interrupt;
 

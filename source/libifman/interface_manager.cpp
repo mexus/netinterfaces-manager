@@ -10,6 +10,10 @@
 
 namespace libifman {
 
+
+const unsigned short InterfaceManager::waitIntervalMs;
+const unsigned short InterfaceManager::iflistReplyBuffer;
+
 InterfaceManager::InterfaceManager() : interrupt(false){
 }
 
@@ -79,7 +83,7 @@ void InterfaceManager::Run(const std::atomic_bool& running, Callbacks callbacks)
 			std::cerr << "Incorrect message length\n";
 		else
 			ProcessMessage(message, receivedLength, innerCallbacks);
-		usleep(waitInterval);
+		std::this_thread::sleep_for(std::chrono::milliseconds(waitIntervalMs));
 	}
 }
 
