@@ -88,7 +88,7 @@ struct nl_request {
         struct rtgenmsg gen;
 };
 
-void InterfaceManager::GetList(const std::atomic_bool& running) {
+void InterfaceManager::GetList(const std::atomic_bool& running, const std::function<void(const Interface&)>& callback) {
 	Socket socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 	auto local = PrepareNetLinkClient(0);
 	socket.Bind(&local);
@@ -146,10 +146,10 @@ void InterfaceManager::GetList(const std::atomic_bool& running) {
 		else
 			ProcessMessage(message, receivedLength, {
                                        {NLMSG_DONE, [&done](const nlmsghdr*){done = true;}},
-                                       {RTM_NEWLINK, [&done](const nlmsghdr* header){
+                                       {RTM_NEWLINK, [&done, &callback](const nlmsghdr* header){
                                                 auto len = header->nlmsg_len;
                                                 Interface interface(static_cast<ifinfomsg*>(NLMSG_DATA(header)), len);
-                                                std::cout << "Interface " << interface.name << " (" << interface.Type() << ", " << interface.address << ")\n";
+						callback(interface);
                                         }}
                                        });
 	} while (!done && !interrupt && running);

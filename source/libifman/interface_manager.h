@@ -19,7 +19,7 @@ public:
 
 	InterfaceManager();
 	~InterfaceManager();
-	void GetList(const std::atomic_bool& runnning);
+	void GetList(const std::atomic_bool& running, const std::function<void(const Interface&)>&);
 	void Watch(const std::atomic_bool& running, const Callbacks& = Callbacks());
 
 private:
