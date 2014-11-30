@@ -10,7 +10,7 @@ namespace libifman {
 
 class Interface {
 public:
-	Interface(ifinfomsg*, int attributesLength);
+	Interface(const ifinfomsg*, int attributesLength);
 
 	const int index;
 	const unsigned short type;
@@ -20,8 +20,8 @@ public:
 
 private:
 	static const std::unordered_map<int, std::string> arpsNames;
-	static std::unordered_map<unsigned short, rtattr*>
-		ParseRAttributes(rtattr *firstAttribute, int attributesLength, const std::unordered_set<unsigned short>& lookupTypes);
+	static std::unordered_map<unsigned short, const rtattr*>
+		ParseRAttributes(const rtattr *firstAttribute, int attributesLength, const std::unordered_set<unsigned short>& lookupTypes);
 	static std::string TypeToStr(int);
 	static std::string L2Address(const unsigned char* str, unsigned int size);
 };

@@ -5,7 +5,7 @@
 
 namespace libifman {
 
-Interface::Interface(ifinfomsg* ifi, int attributesLength) : index(ifi->ifi_index), type(ifi->ifi_type)
+Interface::Interface(const ifinfomsg* ifi, int attributesLength) : index(ifi->ifi_index), type(ifi->ifi_type)
 {
 	auto attributes = ParseRAttributes(IFLA_RTA(ifi), attributesLength, {IFLA_IFNAME, IFLA_ADDRESS});
 	auto it = attributes.find(IFLA_IFNAME);
@@ -40,9 +40,9 @@ std::string Interface::TypeToStr(int t){
 		return it->second;
 }
 
-std::unordered_map<unsigned short, rtattr*>
-Interface::ParseRAttributes(rtattr *attribute, int attributesLength, const std::unordered_set<unsigned short>& lookupTypes) {
-	std::unordered_map<unsigned short, rtattr*> res;
+std::unordered_map<unsigned short, const rtattr*>
+Interface::ParseRAttributes(const rtattr *attribute, int attributesLength, const std::unordered_set<unsigned short>& lookupTypes) {
+	std::unordered_map<unsigned short, const rtattr*> res;
 	while (RTA_OK(attribute, attributesLength)) {
 		auto type = attribute->rta_type;
 		if (lookupTypes.find(type) != lookupTypes.end())
