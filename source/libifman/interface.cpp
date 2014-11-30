@@ -10,7 +10,7 @@ Interface::Interface(const ifinfomsg* ifi, int attributesLength) : index(ifi->if
 	auto attributes = ParseRAttributes(IFLA_RTA(ifi), attributesLength, {IFLA_IFNAME, IFLA_ADDRESS});
 	auto it = attributes.find(IFLA_IFNAME);
 	if (it != attributes.end())
-		name.assign(static_cast<const char*>(RTA_DATA(it->second)), RTA_PAYLOAD(it->second));
+		name.assign(static_cast<const char*>(RTA_DATA(it->second)), RTA_PAYLOAD(it->second) - 1);
 	it = attributes.find(IFLA_ADDRESS);
 	if (it != attributes.end())
 		address = L2Address(static_cast<const unsigned char*>(RTA_DATA(it->second)), RTA_PAYLOAD(it->second));
