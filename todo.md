@@ -1,5 +1,5 @@
 Watcher application:
-- [ ] Tests (maybe via python script)
+- [x] Tests for list interfaces, add and remove interface (via python script)
 
 
 Library:
