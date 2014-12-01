@@ -35,10 +35,10 @@ def interfaces_test():
 
 def test_interfaces_list():
     "Compare devices lists"
-    list1 = interfaces_ip()
-    list2 = interfaces_test()
-    if set(list1) == set(list2):
-        print "Comparing devices lists:"
+    list1 = set(interfaces_ip())
+    list2 = set(interfaces_test())
+    if list1 == list2:
+        print "Comparing devices lists OK"
     else:
         print "[FAILURE] Got devices: ", list2, ", but should be: ", list1
 
@@ -50,7 +50,7 @@ def test_add_device():
     p.terminate()
     for line in p.stdout:
         if re.match("^NEW " + test_device_name, line.strip()):
-            print "New device detected"
+            print "New device detected OK"
             return 
     print "[FAILURE] New device hasn't been detected"
 
@@ -62,7 +62,7 @@ def test_remove_device():
     p.terminate()
     for line in p.stdout:
         if re.match("^GONE " + test_device_name, line.strip()):
-            print "Detected a 'gone' device"
+            print "Detected a 'gone' device OK"
             return 
     print "[FAILURE] 'Gone' device hasn't been detected"
 
