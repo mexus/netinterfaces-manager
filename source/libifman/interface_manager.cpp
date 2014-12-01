@@ -84,7 +84,7 @@ struct nl_request {
         struct rtgenmsg gen;
 };
 
-void InterfaceManager::GetList(const std::atomic_bool& running, const std::function<void(const Interface&)>& callback) {
+std::vector<Interface> InterfaceManager::GetList(const std::atomic_bool& running) {//, const std::function<void(const Interface&)>& callback) {
 	Socket socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 	auto local = PrepareNetLinkClient(0);
 	socket.Bind(&local);
@@ -117,7 +117,7 @@ void InterfaceManager::GetList(const std::atomic_bool& running, const std::funct
         if (send < 0) {
 		int error = errno;
 		std::cout << "Error while sending netlink message: #" << error << ": " << std::strerror(error) << "\n";
-                return ;
+                return {};
         }
 
 	char buf[iflistReplyBuffer] = {0};
@@ -128,6 +128,8 @@ void InterfaceManager::GetList(const std::atomic_bool& running, const std::funct
 	message.msg_namelen = sizeof(local);
 	message.msg_iov = &iov;
 	message.msg_iovlen = 1;
+
+        std::vector<Interface> interfaces;
 
         bool done(false);
         do {
@@ -142,13 +144,13 @@ void InterfaceManager::GetList(const std::atomic_bool& running, const std::funct
 		else
 			ProcessMessage(message, receivedLength, {
                                        {NLMSG_DONE, [&done](const nlmsghdr*){done = true;}},
-                                       {RTM_NEWLINK, [&done, &callback](const nlmsghdr* header){
+                                       {RTM_NEWLINK, [&done, &interfaces](const nlmsghdr* header){
                                                 auto len = header->nlmsg_len;
-                                                Interface interface(static_cast<ifinfomsg*>(NLMSG_DATA(header)), len);
-						callback(interface);
+                                                interfaces.emplace_back(static_cast<ifinfomsg*>(NLMSG_DATA(header)), len);
                                         }}
                                        });
 	} while (!done && !interrupt && running);
+        return std::move(interfaces);
 }
 
 unsigned int InterfaceManager::Pid(){

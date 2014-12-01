@@ -61,7 +61,9 @@ int main(int argc, char** argv){
 		        manager.Watch(running, {{RTM_DELLINK, InterfaceGone}, {RTM_NEWLINK, InterfaceNew}});
 		while (running){
 			if (runList){
-			        manager.GetList(running, InterfacePrint);
+			        auto list = manager.GetList(running);
+                                for (auto& interface: list)
+                                        InterfacePrint(interface);
 				if (runListOnce && !runWatch)
 					break;
 				else if (runListOnce)
