@@ -28,7 +28,7 @@ private:
 	static const unsigned short iflistReplyBuffer = 8192;
 	std::atomic_bool interrupt;
 
-	static void ProcessMessage(const msghdr& message, ssize_t &receivedLength, const InnerCallbacks&);
+	static void ProcessMessage(const msghdr& message, ssize_t receivedLength, const InnerCallbacks&);
 	static sockaddr_nl PrepareNetLinkClient(unsigned int groups, bool localPid = true);
 	void Run(const std::atomic_bool& running, Callbacks = Callbacks());
 

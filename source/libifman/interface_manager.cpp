@@ -25,20 +25,12 @@ InterfaceManager::~InterfaceManager(){
 	}
 }
 
-void InterfaceManager::ProcessMessage(const msghdr& message, ssize_t &receivedLength, const InnerCallbacks& callbacks){
-	for (auto header = static_cast<nlmsghdr*>(message.msg_iov->iov_base); receivedLength >= static_cast<ssize_t>(sizeof(*header)); ){
-		auto len = header->nlmsg_len;
-		if (len < sizeof(*header) || len > receivedLength)
-			std::cerr << "Incorrect message length: " << len << "\n";
-                else {
-			auto it = callbacks.find(header->nlmsg_type);
-			if (it != callbacks.end())
-                                it->second(header);
-                        else
-                                std::cout << "Unhandled " << header->nlmsg_type << std::endl;
-			receivedLength -= NLMSG_ALIGN(len);
-			header = reinterpret_cast<nlmsghdr*>(reinterpret_cast<char*>(header) + NLMSG_ALIGN(len));
-		}
+void InterfaceManager::ProcessMessage(const msghdr& message, ssize_t msgLen, const InnerCallbacks& callbacks) {
+        auto reply = message.msg_iov->iov_base;
+        for (auto header = static_cast<nlmsghdr*>(reply); NLMSG_OK(header, msgLen); header = NLMSG_NEXT(header, msgLen)){
+		auto it = callbacks.find(header->nlmsg_type);
+		if (it != callbacks.end())
+                        it->second(header);
 	}
 }
 
