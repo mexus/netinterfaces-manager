@@ -1,6 +1,7 @@
 #ifndef LIBIFMAN_INTERFACE_H
 #define LIBIFMAN_INTERFACE_H
 
+#include <sys/socket.h>
 #include <linux/rtnetlink.h>
 #include <string>
 #include <unordered_map>
