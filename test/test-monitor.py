@@ -5,9 +5,11 @@ import re
 import time
 
 testExecutable = "../build/watcher/watcher"
-ipExecutable = "/sbin/ip"
 test_device_name = "eth_test"
-sudo = "sudo"
+ipExecutable = "/sbin/ip"
+
+add_interface_cmd = ["sudo", "/sbin/ip", "tuntap", "add", test_device_name, "mode", "tap"]
+remove_interface_cmd = ["sudo", "/sbin/ip", "link", "del", test_device_name]
 
 def interfaces_ip():
     "Get interfaces list from ip"
@@ -45,7 +47,7 @@ def test_interfaces_list():
 def test_add_device():
     "Test detection of a new net device"
     p = subprocess.Popen([testExecutable, "--no-list"], stdout=subprocess.PIPE)
-    subprocess.call([sudo, ipExecutable, "tuntap", "add", test_device_name, "mode", "tap"])
+    subprocess.call(add_interface_cmd, stdout=subprocess.PIPE)
     time.sleep(0.3)
     p.terminate()
     for line in p.stdout:
@@ -57,7 +59,7 @@ def test_add_device():
 def test_remove_device():
     "Test detection of a net device that has gone"
     p = subprocess.Popen([testExecutable, "--no-list"], stdout=subprocess.PIPE)
-    subprocess.call([sudo, ipExecutable, "tuntap", "del", test_device_name, "mode", "tap"])
+    subprocess.call(remove_interface_cmd)
     time.sleep(0.3)
     p.terminate()
     for line in p.stdout:
