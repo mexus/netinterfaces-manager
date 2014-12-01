@@ -64,7 +64,7 @@ int main(int argc, char** argv){
 			        manager.GetList(running, InterfacePrint);
 				if (runListOnce && !runWatch)
 					break;
-				else
+				else if (runListOnce)
 					runList = false;
 			}
 			std::this_thread::sleep_for(std::chrono::seconds(5));
