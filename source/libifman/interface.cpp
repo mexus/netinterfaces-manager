@@ -5,7 +5,7 @@
 
 namespace libifman {
 
-Interface::Interface(const ifinfomsg* ifi, int attributesLength) : index(ifi->ifi_index), type(ifi->ifi_type)
+Interface::Interface(const ifinfomsg* ifi, int attributesLength) : type(ifi->ifi_type)
 {
 	auto attributes = ParseRAttributes(IFLA_RTA(ifi), attributesLength, {IFLA_IFNAME, IFLA_ADDRESS});
 	auto it = attributes.find(IFLA_IFNAME);
@@ -50,6 +50,14 @@ Interface::ParseRAttributes(const rtattr *attribute, int attributesLength, const
 		attribute = RTA_NEXT(attribute, attributesLength);
 	}
 	return std::move(res);
+}
+
+const std::string& Interface::GetName() const {
+	return name;
+}
+
+const std::string& Interface::GetAddress() const {
+	return address;
 }
 
 }

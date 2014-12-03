@@ -13,17 +13,17 @@ void SignalHandler(int){
 
 void InterfaceNew(const libifman::Interface& interface){
 	std::lock_guard<std::mutex> lg(coutMutex);
-	std::cout << "NEW " << interface.name << " " << interface.address << " " << interface.Type() << "\n";
+	std::cout << "NEW " << interface.GetName() << " " << interface.GetAddress() << " " << interface.Type() << "\n";
 }
 
 void InterfaceGone(const libifman::Interface& interface){
 	std::lock_guard<std::mutex> lg(coutMutex);
-	std::cout << "GONE " << interface.name << "\n";
+	std::cout << "GONE " << interface.GetName() << "\n";
 }
 
 void InterfacePrint(const libifman::Interface& interface){
 	std::lock_guard<std::mutex> lg(coutMutex);
-	std::cout << "IFACE " << interface.name << " " << interface.address << " " << interface.Type() << "\n";
+	std::cout << "IFACE " << interface.GetName() << " " << interface.GetAddress() << " " << interface.Type() << "\n";
 }
 
 bool cmp(const char* lhs, const char* rhs){

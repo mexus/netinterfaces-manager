@@ -13,13 +13,14 @@ class Interface {
 public:
 	Interface(const ifinfomsg*, int attributesLength);
 
-	const int index;
-	const unsigned short type;
-	std::string name, address;
-	
+	const std::string& GetName() const;
+	const std::string& GetAddress() const;
 	std::string Type() const;
 
 private:
+	const unsigned short type;
+	std::string name, address;
+	
 	static const std::unordered_map<int, std::string> arpsNames;
 	static std::unordered_map<unsigned short, const rtattr*>
 		ParseRAttributes(const rtattr *firstAttribute, int attributesLength, const std::unordered_set<unsigned short>& lookupTypes);
